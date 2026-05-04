@@ -1,14 +1,14 @@
 import { useSQLiteContext } from 'expo-sqlite';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { Equipo } from '../../data/entity/Equipo';
+import { EquipoModel } from '@/domain/model/EquipoModel';
 import { EquipoRepositoryImpl } from '../../data/repository/EquipoRepositoryImpl';
 import { GetEquiposUseCase } from '../usecases/GetEquipoUseCase';
 
 export function useEquipos() {
   const db = useSQLiteContext();
 
-  const [equipos, setEquipos] = useState<Equipo[]>([]);
+  const [equipos, setEquipos] = useState<EquipoModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

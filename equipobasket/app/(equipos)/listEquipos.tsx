@@ -1,9 +1,13 @@
-import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Button, FlatList, Pressable, Text, View } from "react-native";
 import { useEquipos } from "../../domain/presentation/hook/useEquipos";
 import { globalStyles as styles } from "../../styles/globalStyles";
+import { Stack, useRouter } from "expo-router";
 
 export default function ListEquipos() {
   const { equipos, isLoading, error, reload } = useEquipos();
+  const router=useRouter();
+
+
   
   if (isLoading) {
     return (
@@ -27,6 +31,22 @@ export default function ListEquipos() {
   }
 
   return (
+    <>
+    <Stack.Screen
+          options={{
+            headerTitle: "Perfil",
+            headerRight: () => (
+              <Button 
+                  title="nuevo"
+                  onPress={() => {
+                    router.push("/(equipos)/editNewEquipo");
+                  }} >  
+                    <Text>Nuevo</Text>
+              </Button>
+
+                )
+          }}
+    />
     <View style={styles.container}>
       <FlatList
         data={equipos}
@@ -44,5 +64,6 @@ export default function ListEquipos() {
         )}
       />
     </View>
+    </>
   );
 }
