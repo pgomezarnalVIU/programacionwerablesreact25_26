@@ -9,6 +9,8 @@ type MenuItem = {
   url: string;
 };
 
+//Array de objetos para representar los elementos del menú, 
+// cada uno con su título, imagen y URL de navegación
 const menuItems: MenuItem[] = [
     {
       id: 0,
