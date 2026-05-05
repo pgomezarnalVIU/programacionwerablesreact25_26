@@ -7,8 +7,6 @@ export default function ListEquipos() {
   const { equipos, isLoading, error, reload } = useEquipos();
   const router=useRouter();
 
-
-  
   if (isLoading) {
     return (
       <View style={styles.center}>

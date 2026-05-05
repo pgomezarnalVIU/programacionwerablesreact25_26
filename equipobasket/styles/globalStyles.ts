@@ -90,4 +90,62 @@ export const  globalStyles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 4,
   },
+  containerForm: {
+    flex: 1,
+  },
+  form: {
+    padding: 16,
+    gap: 16,
+  },
+  titleField: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  field: {
+    gap: 6,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  input: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    backgroundColor: '#ffffff',
+    fontSize: 16,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    overflow: 'hidden',
+  },
+  error: {
+    color: '#dc2626',
+    fontSize: 14,
+  },
+  buttonForm: {
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#111827',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+  },
+  buttonPressed: {
+    opacity: 0.8,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  buttonTextForm: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
 });
