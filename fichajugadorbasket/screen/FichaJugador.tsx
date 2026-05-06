@@ -9,6 +9,8 @@ import {
 } from "react-native";
 
 export default function FichaJugadorScreen() {
+  //Hook para manejar el estado de los campos del formulario
+  /* Definir las variables de estado */
   const [nombre, setNombre] = useState("");
   const [edad, setEdad] = useState("");
   const [numero, setNumero] = useState("");
@@ -16,6 +18,12 @@ export default function FichaJugadorScreen() {
 
   const posiciones = ["Base", "Alero", "Pívot", "Escolta"];
 
+  const handleNameChange = (text: string) => {
+    const textUpper = text.toUpperCase();
+    setNombre(textUpper);
+  };
+
+  /*JSX*/
   return (
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Ficha del jugador</Text>
@@ -26,7 +34,7 @@ export default function FichaJugadorScreen() {
             style={styles.input}
             placeholder="Ej: Luka Dončić"
             value={nombre}
-            onChangeText={setNombre}
+            onChangeText={handleNameChange}
           />
 
           <Text style={styles.label}>Edad</Text>
