@@ -17,6 +17,10 @@ export default function Index() {
       setLista(allRows);
   }
 
+  // Cargar datos al montar el componente
+  // useEffect se ejecuta después de que el componente se haya renderizado, 
+  // lo que es ideal para cargar datos iniciales
+  // La dependencia [db] asegura que si la conexión a la base de datos cambia, se recarguen los datos
   useEffect(() => {
     loadData();
   }, [db]);
