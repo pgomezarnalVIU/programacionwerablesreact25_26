@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { router } from 'expo-router';
+import { useEffect, useState, useRef  } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -35,28 +35,63 @@ export type EquipoTipo = 'masculino' | 'femenino' | 'mixto';
 const tipos: EquipoTipo[] = ['masculino', 'femenino', 'mixto'];
 
 export default function EditNewEquipo() {
-  const { createEquipo, isSubmitting, error } = useCreateEquipo();
+  const { equipo,initEquipo,createEquipo,updateEquipo, isSubmitting, error } = useCreateEquipo();
+  //Recepción de datos edicion de equipo desde
+  // la pantalla de listado de equipos, si no se reciben datos se asume que es un nuevo equipo
+  const equipoSeleccionado = useLocalSearchParams<{ equipo?: string }>();
+  const ultimoEquipoProcesado = useRef<string | null>(null);
 
   const [nombre, setNombre] = useState('');
   const [categoria, setCategoria] = useState<EquipoCategoria>('senior');
   const [tipo, setTipo] = useState<EquipoTipo>('masculino');
 
   const handleSubmit = async () => {
-     const equipoCreado = await createEquipo(
-      {
-        id: 0,
-        nombre,
-        categoria,
-        tipo,
-      }    );
-
-    if (equipoCreado) {
-      alert('Equipo creado con éxito');
-    } else {
-      alert('Error al crear el equipo');
-    }
+     if(equipo===null){
+      const equipoCreado = await createEquipo(
+        {
+          id: 0,
+          nombre,
+          categoria,
+          tipo,
+        }    );
+        if (equipoCreado) {
+          alert('Equipo creado con éxito');
+        } else {
+          alert('Error al crear el equipo');
+        }
+     }else{
+      const equipoActualizado = await updateEquipo(equipo);
+        if (equipoActualizado) {
+          alert('Equipo actualizado con éxito');
+        } else {
+          alert('Error al actualizar el equipo');
+        }
+     }
     router.back();
   };
+
+  //Inicializamos el equipo si existen datos recibidos desde la pantalla de listado de equipos, esto es para el caso de edicion de equipo, 
+  // si no se reciben datos se asume que es un nuevo equipo
+useEffect(() => {
+  const equipoParam = equipoSeleccionado?.equipo;
+
+  if (!equipoParam) return;
+
+  // Evita procesar dos veces el mismo valor
+  if (ultimoEquipoProcesado.current === equipoParam) return;
+
+  ultimoEquipoProcesado.current = equipoParam;
+  try {
+    const equipo = JSON.parse(equipoParam);
+    console.log("Received params:", equipo);
+    initEquipo(equipo);
+    setNombre(equipo.nombre);
+    setCategoria(equipo.categoria);
+    setTipo(equipo.tipo);
+  } catch (error) {
+    console.error("Error parseando equipo:", error);
+  }
+}, [equipoSeleccionado?.equipo]);
 
   return (
       <View style={styles.form}>
@@ -122,7 +157,7 @@ export default function EditNewEquipo() {
           onPress={handleSubmit}
         >
           <Text style={styles.buttonTextForm}>
-            Crear equipo
+            {equipo === null ? "Crear equipo" : "Modificar equipo"}
           </Text>
         </Pressable>
       </View>

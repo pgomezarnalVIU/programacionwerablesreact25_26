@@ -53,4 +53,25 @@ export class EquipoRepositoryImpl implements EquipoRepository {
       return createdEquipo;
     }
   }
+
+  async update(equipo: Equipo): Promise<void> {
+    const result = await this.db.runAsync(
+      `
+      UPDATE equipos
+      SET nombre = ?,
+          categoria = ?,
+          tipo = ?
+      WHERE id = ?
+      `,
+      [
+        equipo.nombre,
+        equipo.categoria,
+        equipo.tipo,
+        equipo.id,
+      ]
+    );
+    if (result.changes === 0) {
+      throw new Error('No se pudo actualizar el equipo');
+    }
+  }
 }

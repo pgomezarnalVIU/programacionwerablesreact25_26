@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EquipoModel } from '@/domain/model/EquipoModel';
 import { EquipoRepositoryImpl } from '../../data/repository/EquipoRepositoryImpl';
 import { GetEquiposUseCase } from '../usecases/GetEquipoUseCase';
+import { useFocusEffect } from 'expo-router';
 
 export function useEquipos() {
   // Obtener la instancia de la base de datos SQLite desde el contexto
@@ -47,6 +48,15 @@ export function useEquipos() {
   useEffect(() => {
     loadEquipos();
   }, [loadEquipos]);
+
+
+  // Cargar los equipos cuando el componente gana el foco 
+  // (por ejemplo, al navegar a esta pantalla)
+  useFocusEffect(
+  useCallback(() => {
+    loadEquipos();
+  }, [])
+);
 
   return {
     equipos,

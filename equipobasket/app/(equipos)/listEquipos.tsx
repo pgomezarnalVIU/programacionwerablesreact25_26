@@ -1,4 +1,4 @@
-import { ActivityIndicator, Button, FlatList, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Button, FlatList, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { useEquipos } from "../../domain/presentation/hook/useEquipos";
 import { globalStyles as styles } from "../../styles/globalStyles";
 import { Stack, useRouter } from "expo-router";
@@ -54,11 +54,20 @@ export default function ListEquipos() {
           <Text style={styles.emptyText}>No hay equipos registrados.</Text>
         }
         renderItem={({ item }) => (
-          <View style={styles.cardEquipo}>
-            <Text style={styles.name}>{item.nombre}</Text>
-            <Text style={styles.detail}>Categoría: {item.categoria}</Text>
-            <Text style={styles.detail}>Tipo: {item.tipo}</Text>
-          </View>
+          <TouchableOpacity
+            onPress={() => {
+              router.push({
+                pathname: "/(equipos)/editNewEquipo",
+                params: { equipo: JSON.stringify(item) },
+              });
+            }
+          }>
+            <View style={styles.cardEquipo}>
+              <Text style={styles.name}>{item.nombre}</Text>
+              <Text style={styles.detail}>Categoría: {item.categoria}</Text>
+              <Text style={styles.detail}>Tipo: {item.tipo}</Text>
+            </View>
+          </TouchableOpacity>
         )}
       />
     </View>
