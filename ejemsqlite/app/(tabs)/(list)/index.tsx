@@ -1,7 +1,7 @@
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
-import { useEffect, useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 
 
 export default function Index() {
@@ -9,35 +9,77 @@ export default function Index() {
   const [lista, setLista] = useState([]);
   const router=useRouter();
 
-  useEffect(() => {
-    async function loadData() {
+  async function loadData() {
       const allRows = await db.getAllAsync('SELECT * FROM lista');
       for (const row of allRows) {
         console.log(row.id, row.nombre, row.numero);
       }
       setLista(allRows);
-    }
+  }
 
+  useEffect(() => {
     loadData();
   }, [db]);
+
+  // Refrescar datos cada vez que la pantalla se enfoque
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [])
+  );
+
+  const handleDelete = (id: number, nombre: string) => {
+    Alert.alert(
+      'Confirmar borrado',
+      `¿Deseas borrar "${nombre}"?`,
+      [
+        {
+          text: 'Cancelar',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'Borrar',
+          onPress: async () => {
+            try {
+              await db.runAsync('DELETE FROM lista WHERE id = ?', [id]);
+              loadData(); // Recargamos la lista
+            } catch (error) {
+              console.error('Error al borrar:', error);
+              Alert.alert('Error', 'No se pudo borrar el elemento');
+            }
+          },
+          style: 'destructive',
+        },
+      ]
+    );
+  };
 
   return (
     <View
       style={styles.container}
     >
       {lista.map((item) => (
-        <TouchableOpacity key={item.id} onPress={() => router.push({ 
-          pathname: '/edit', 
-          params: { 
-            id: item.id.toString(),
-            nombre: item.nombre,
-            numero: item.numero.toString()
-          } 
-        })}>
-          <Text style={styles.textRow} key={item.id}>
-            Nombre: {item.nombre} - Número: {item.numero}
-          </Text>
-        </TouchableOpacity>
+        <View key={item.id} style={styles.itemContainer}>
+          <TouchableOpacity style={styles.textContainer} onPress={() => router.push({ 
+            pathname: '/edit', 
+            params: { 
+              id: item.id.toString(),
+              nombre: item.nombre,
+              numero: item.numero.toString()
+            } 
+          })}>
+            <Text style={styles.textRow}>
+              Nombre: {item.nombre} - Número: {item.numero}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.deleteButton}
+            onPress={() => handleDelete(item.id, item.nombre)}
+          >
+            <Text style={styles.deleteButtonText}>Borrar</Text>
+          </TouchableOpacity>
+        </View>
       ))}
     </View>
   );
@@ -49,10 +91,30 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "left",
   },
+  itemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 5,
+    paddingHorizontal: 10,
+  },
+  textContainer: {
+    flex: 1,
+  },
   textRow :{
-    margin: 10,
     fontSize: 16,
     fontWeight: "bold",
+  },
+  deleteButton: {
+    backgroundColor: '#ff4444',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
   }
 });
 
